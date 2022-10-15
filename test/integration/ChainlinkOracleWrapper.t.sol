@@ -10,19 +10,19 @@ contract ChainlinkOracleWrapperIntegrationTest is Test {
     ChainlinkOracleWrapper public oracle;
 
     function setUp() public {
-        oracle = new ChainlinkOracleWrapper(MainnetAddresses.CHAINLINK_GBP_USDC_FEED);
+        oracle = new ChainlinkOracleWrapper(MainnetAddresses.CHAINLINK_GBP_USD_FEED);
     }
 
     function testInitialState() public {
         assertEq(oracle.decimals(), 8);
-        assertEq(address(oracle.chainlinkOracle()), MainnetAddresses.CHAINLINK_GBP_USDC_FEED);
+        assertEq(address(oracle.chainlinkOracle()), MainnetAddresses.CHAINLINK_GBP_USD_FEED);
     }
 
     /// @notice Validate a reasonable price can be fetched
     function testGetPrice() public {
         uint256 gbpPerUsdPrice = oracle.getPrice();
         assertGt(gbpPerUsdPrice, 0);
-        assertGt(gbpPerUsdPrice, 1e8); // >$1
-        assertLt(gbpPerUsdPrice, 1e8 + 5e7); // <$1.5
+        assertGt(gbpPerUsdPrice, 1e18); // >$1
+        assertLt(gbpPerUsdPrice, 1e18 + 5e17); // <$1.5
     }
 }

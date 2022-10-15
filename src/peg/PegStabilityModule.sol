@@ -47,9 +47,9 @@ contract PegStabilityModule is AuthRef {
     }
 
     /// @notice Preview GBP-X mint amount out
-    function previewMintAmountOut(uint256 amountUnderlingIn) view public returns (uint256) {
+    function previewMintAmountOut(uint256 amountUnderlyingIn) view public returns (uint256) {
         uint256 gbpInUsdPrice = oracle.getPrice();
-        return amountUnderlingIn / gbpInUsdPrice;
+        return amountUnderlyingIn / gbpInUsdPrice;
     }
 
     /// @notice Mint GBP-X, by providing underlying 
