@@ -23,6 +23,6 @@ contract ChainlinkOracleWrapper {
     /// @notice Get latest round oracle price. Return as 18 decimals
     function getPrice() view external returns (uint256) {
         (, int256 price, , , ) = chainlinkOracle.latestRoundData();
-        return (uint256(price) * BASE_DECIMALS) / decimals;
+        return (uint256(price) * BASE_DECIMALS) / 10**decimals;
     }
 }

@@ -9,6 +9,7 @@ import {SafeERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeE
 
 /// @notice Peg stability module which allows minting of GBP-X and redemptions
 ///         for underlying, at price given by oracle
+/// @dev Assumes DAI is 1:1 with USD
 contract PegStabilityModule is AuthRef {
     using SafeERC20 for IERC20;
     using SafeERC20 for GBPX;
@@ -43,13 +44,13 @@ contract PegStabilityModule is AuthRef {
     /// @notice Preview underling redeem amount out
     function previewRedeemAmountOut(uint256 amountGBPXIn) view public returns (uint256) {
         uint256 gbpInUsdPrice = oracle.getPrice();
-        return amountGBPXIn * gbpInUsdPrice;
+        return (amountGBPXIn * gbpInUsdPrice) / 1e18;
     }
 
     /// @notice Preview GBP-X mint amount out
     function previewMintAmountOut(uint256 amountUnderlyingIn) view public returns (uint256) {
         uint256 gbpInUsdPrice = oracle.getPrice();
-        return amountUnderlyingIn / gbpInUsdPrice;
+        return (amountUnderlyingIn * 1e18) / gbpInUsdPrice;
     }
 
     /// @notice Mint GBP-X, by providing underlying 
@@ -62,7 +63,7 @@ contract PegStabilityModule is AuthRef {
 
     /// @notice Redeem GBP-X for underlying
     function redeem(address to, uint256 amountGBPXIn) external {
-        uint256 amountUnderlyingOut = previewMintAmountOut(amountGBPXIn);
+        uint256 amountUnderlyingOut = previewRedeemAmountOut(amountGBPXIn);
         gbpx.safeTransferFrom(msg.sender, address(this), amountGBPXIn);
         underlying.transfer(to, amountUnderlyingOut);
         emit Redeem(msg.sender, to, amountGBPXIn, amountUnderlyingOut);

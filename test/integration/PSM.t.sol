@@ -48,19 +48,43 @@ contract PegStabilityModuleIntegrationTest is Test {
         assertEq(address(psm.oracle()), address(oracle));
     }
 
+    /// @notice Mint some GBP-X, by providing underlying DAI to the PSM
     function testMint() public {
-        uint256 amountDAIIn = 10e8;
+        uint256 amountDAIIn = 10e18;
 
-        vm.prank(DAI_WHALE);
+        vm.startPrank(DAI_WHALE);
+        dai.approve(address(psm), amountDAIIn);
         psm.mint(user, amountDAIIn);
+        vm.stopPrank();
 
-        uint256 expectedGBPXOut = 5;
+        uint256 gbpInUsdPrice = oracle.getPrice();
+        uint256 expectedGBPXOut = (amountDAIIn * 1e18) / gbpInUsdPrice;
 
         assertEq(dai.balanceOf(address(psm)), amountDAIIn);
         assertEq(gbpx.balanceOf(user), expectedGBPXOut);
     }
 
+    /// @notice Redeem DAI from PSM for GBP-X
     function testRedeem() public {
+        // Mint some GBPX to user
+        uint256 amountGBPXIn = 10e18;
+        vm.prank(minter);
+        gbpx.mint(user, amountGBPXIn);
 
+        // Initialise PSM with some DAI
+        vm.prank(DAI_WHALE);
+        dai.transfer(address(psm), 100e18);
+
+        // Redeem GBPX for DAI from PSM
+        vm.startPrank(user);
+        gbpx.approve(address(psm), amountGBPXIn);
+        psm.redeem(user, amountGBPXIn);
+        vm.stopPrank();
+
+        uint256 gbpInUsdPrice = oracle.getPrice();
+        uint256 expectedDAIOut = (gbpInUsdPrice * amountGBPXIn) / 1e18;
+
+        assertEq(gbpx.balanceOf(user), 0);
+        assertEq(dai.balanceOf(user), expectedDAIOut);
     }
 }
