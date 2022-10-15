@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {Test} from "./libs/Test.sol";
-import {Auth} from "../src/Auth.sol";
+import {Auth} from "../src/auth/Auth.sol";
 
 contract AuthTest is Test {
     Auth public auth;

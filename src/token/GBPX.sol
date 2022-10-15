@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.13;
 
-import {AuthRef} from "./AuthRef.sol";
+import {AuthRef} from "../auth/AuthRef.sol";
 import {ERC20Burnable, ERC20} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
 contract GBPX is ERC20Burnable, AuthRef {

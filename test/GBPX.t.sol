@@ -3,8 +3,8 @@ pragma solidity ^0.8.13;
 
 import {Test} from "./libs/Test.sol";
 import {Vm} from "./libs/Vm.sol";
-import {Auth} from "../src/Auth.sol";
-import {GBPX} from "../src/GBPX.sol";
+import {Auth} from "../src/auth/Auth.sol";
+import {GBPX} from "../src/token/GBPX.sol";
 
 contract GBPXTest is Test {
     GBPX public gbpx;
